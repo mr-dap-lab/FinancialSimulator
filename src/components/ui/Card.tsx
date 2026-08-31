@@ -29,7 +29,7 @@ export function Card({
   bodyClassName = 'p-4 sm:p-6',
 }: CardProps) {
   return (
-    <section className={`rounded-lg ${VARIANTS[variant]} ${className}`}>
+    <section data-pdf-block="true" className={`rounded-lg ${VARIANTS[variant]} ${className}`}>
       {(title || actions) && (
         <header className="flex flex-wrap items-center justify-between gap-3 px-4 pt-4 sm:px-6 sm:pt-5">
           <div>

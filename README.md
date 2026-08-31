@@ -452,6 +452,33 @@ snapshot, carries no accessibility semantics of its own — an acknowledged limi
 not something to work around; the on-screen report follows the same accessibility baseline as
 the rest of the app.
 
+**The PDF is captured and paginated per section, not as one continuous screenshot.** An
+earlier version captured the whole report as a single tall canvas and sliced it into
+fixed-height pages — that slice had no idea where a chart's own boundaries were, so it cut
+wherever the page-height math landed, sometimes through the middle of a chart.
+[`collectBlocks`](src/lib/report.ts) walks the capture root's direct children and treats each
+one as its own block: the header, the parameter recap, the whole summary section (a plain grid
+of `SummaryCard`s in every feature, small enough to always fit together), and the detail table
+are each captured directly, while the charts wrapper is deliberately left unmarked so
+`collectBlocks` descends into it — every feature wraps each individual chart in the shared
+`Card` component, and `Card` itself carries the `data-pdf-block` marker that makes this work
+for all seven features with no per-feature changes. `generatePdf` then runs one `html2canvas()`
+call per block and hands their heights to
+[`planPdfLayout`](src/lib/report.ts) — a small, DOM-free, unit-tested pagination planner
+(see [`report.test.ts`](src/lib/__tests__/report.test.ts)) that places each block whole,
+starting a fresh page rather than splitting one, and treats only a block taller than a full
+page on its own (an unexpectedly long table) as the one exception allowed to span pages, the
+same way the whole report used to.
+
+**The report modal is as wide as the app's own main content column** (`max-w-7xl`, matching
+`App.tsx`'s `<main>`), not a narrower, arbitrary modal width. Every feature's chart and summary
+grid is built with viewport-width breakpoints (`lg:grid-cols-3`, `xl:grid-cols-6`, …) tuned
+against that column's real width — a narrower modal gave those grids the same column *count*
+as the live tab page but far less width per column (measured: a 3-column chart grid squeezed to
+~261px per column instead of ~390px), which is what made chart content cramped inside the
+modal. Matching the width removes that mismatch at its source instead of patching each grid
+individually.
+
 ## Ayuda
 
 Reference material, not a calculator — reached from a `?` icon in the top bar (`/ayuda`, via

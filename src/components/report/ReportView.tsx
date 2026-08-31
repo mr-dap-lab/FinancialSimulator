@@ -79,7 +79,14 @@ export function ReportView({ open, onClose, featureTitle, parameters, summary, c
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="w-full max-w-4xl rounded-lg bg-surface shadow-e3"
+        // As wide as the app's own main content column (`max-w-7xl` in
+        // App.tsx), not a narrower, arbitrary modal width — every feature's
+        // chart/summary grid uses viewport-width breakpoints (`lg:`, `xl:`),
+        // so a narrower dialog gave those grids the same column *count* as
+        // the real tab page but far less width per column, squeezing charts
+        // into a box they were never designed to fit. Matching the width
+        // removes that mismatch instead of patching each grid individually.
+        className="w-full max-w-7xl rounded-lg bg-surface shadow-e3"
       >
         <div className="flex items-center justify-between gap-3 border-b border-outline-variant px-4 py-3 sm:px-6">
           <h2 id={titleId} className="text-lg font-medium text-on-surface">
@@ -95,16 +102,20 @@ export function ReportView({ open, onClose, featureTitle, parameters, summary, c
           </div>
         </div>
 
+        {/* This report's own scrollable region — a fixed viewport-relative
+            height with its own overflow, so nothing here depends on
+            whatever scroll/overflow rules happen to apply to the feature
+            tab this was opened from. */}
         <div className="max-h-[75vh] overflow-y-auto px-4 py-4 sm:px-6">
-          <div ref={captureRef} className="space-y-6 bg-surface p-2">
-            <div>
+          <div ref={captureRef} className="flex flex-col gap-6 bg-surface p-2">
+            <div data-pdf-block="true">
               <h1 className="text-xl font-normal text-on-surface">{t.app.title}</h1>
               <p className="text-sm text-on-surface-variant">{featureTitle}</p>
               <p className="text-xs text-on-surface-variant">{t.common.generatedOn(generatedOn)}</p>
             </div>
 
             {parameters.length > 0 && (
-              <div>
+              <div data-pdf-block="true">
                 <h3 className="mb-2 text-sm font-medium text-on-surface">{t.common.reportParameters}</h3>
                 <dl className="grid grid-cols-1 gap-x-6 gap-y-1 text-sm sm:grid-cols-2">
                   {parameters.map((parameter) => (
@@ -117,9 +128,21 @@ export function ReportView({ open, onClose, featureTitle, parameters, summary, c
               </div>
             )}
 
+            {/* Both wrappers below are deliberately left unmarked (no
+                `data-pdf-block`) rather than treated as one block each:
+                `summary` has no `<Card>`s inside it in any feature, so
+                `collectBlocks` naturally captures it whole — exactly right,
+                a row of summary cards is small enough to always fit
+                together. `charts` does have one `<Card>` per chart in every
+                feature, and `Card` itself carries the marker — leaving this
+                wrapper unmarked is what lets `collectBlocks` descend into
+                those and give each chart its own page-break-safe block
+                instead of merging the whole chart grid into one. See
+                `collectBlocks` in `lib/report.ts`. */}
             <div>{summary}</div>
             <div>{charts}</div>
-            <div>
+
+            <div data-pdf-block="true">
               <h3 className="mb-2 text-sm font-medium text-on-surface">{t.common.schedule}</h3>
               <ReportTable data={table} mode={tableMode} />
             </div>

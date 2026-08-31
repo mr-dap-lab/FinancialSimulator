@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useLocale } from './context/locale'
 import { LocaleProvider } from './context/LocaleProvider'
+import { AccessGate } from './features/auth/AccessGate'
 import { AccountControl } from './features/auth/AccountControl'
 import { AuthProvider } from './features/auth/AuthProvider'
 import { LoginScreen } from './features/auth/LoginScreen'
@@ -337,7 +338,9 @@ export default function App() {
       <I18nProvider>
         <LocaleProvider>
           <AuthProvider>
-            <Shell />
+            <AccessGate>
+              <Shell />
+            </AccessGate>
           </AuthProvider>
         </LocaleProvider>
       </I18nProvider>

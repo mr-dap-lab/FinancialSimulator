@@ -774,6 +774,8 @@ export const es = {
     loginTitle: 'Inicia sesión',
     loginSubtitle:
       'Ingresa tu correo y contraseña. El resto de la app sigue funcionando igual sin iniciar sesión.',
+    gateTitle: 'Acceso restringido',
+    gateSubtitle: 'Inicia sesión con tu correo y contraseña para continuar.',
     email: 'Correo electrónico',
     password: 'Contraseña',
     loginError: 'Correo o contraseña incorrectos',

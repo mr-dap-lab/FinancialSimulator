@@ -9,9 +9,11 @@ shared, plus a top bar with language/currency/theme controls, sign-in, and a `?`
 React + Vite + TypeScript + Tailwind + Recharts, styled with
 [Material Design 3](https://m3.material.io/components). English and Spanish, light and dark,
 five currencies. No backend for the app's own data — all parameters live in the browser. The
-two exceptions are sign-in (see [Sign in (mock)](#sign-in-mock) below) and the PDF export (see
+two exceptions are sign-in (see [Sign in (mock)](#sign-in-mock) and
+[Access gate](#access-gate-vite_require_login) below) and the PDF export (see
 [Ver reporte / PDF export](#ver-reporte--pdf-export)), both of which are themselves client-side
-only, not calls to a server.
+only, not calls to a server. [three.js](https://threejs.org/) powers one purely decorative
+animation on the access gate's background — see below.
 
 ```bash
 npm install
@@ -502,6 +504,7 @@ src/
     __tests__/noHardcodedStrings.test.ts  # AST-based guard — fails the build on a stray literal string
   theme/                  # light/dark mode; theme.ts also holds CHART_PALETTES
   types/material-web.d.ts # JSX typing for the one @material/web tag in use
+  assets/access-gate-bg.jpg  # background image for the access gate overlay
   components/ui/          # generic, feature-agnostic M3 primitives
     Inputs.tsx            # CurrencyInput, NumberInput, PercentInput, Select, Checkbox
     ParamField.tsx  fieldStyles.ts  Controls.tsx  # Button, IconButton, Switch, Disclosure
@@ -515,7 +518,11 @@ src/
   hooks/                  # useHashTab (tab state in the URL hash), usePrefersReducedMotion
   features/
     shared/               # WarningList, shared across features
-    auth/                 # mock sign-in — see below; nothing else depends on it
+    auth/                 # mock sign-in + access gate — see below; nothing else depends on it
+      LoginForm.tsx       # the one hardcoded-credential check, shared by /login and the gate
+      AccessGate.tsx      # VITE_REQUIRE_LOGIN wall in front of the whole app
+      AccessGateScene.tsx # three.js particle background for the gate overlay
+      __tests__/AccessGate.test.tsx  # gate block/reveal/sign-out/persistence, flag forced on
     help/                 # Ayuda — HelpFeature.tsx + helpIndex.ts (see Ayuda below)
     savings/              # Ahorro — owns its params in useSavings
     savingsGoal/          # Meta de ahorro — useSavingsGoal
@@ -537,9 +544,11 @@ global settings. Adding a simulator means a model in `src/lib/`, a folder under
 
 ## Sign in (mock)
 
-Identifies who's using the app — name, email — for profile purposes only. It is **additive,
-never a gate**: Ahorro, Crédito, and Tarjeta work exactly the same signed in or out, and no
-feature reads `useAuth()` except the top bar's account control and `/login` itself.
+Identifies who's using the app — name, email — for profile purposes only. By default it is
+**additive, never a gate**: Ahorro, Crédito, and Tarjeta work exactly the same signed in or
+out, and no feature reads `useAuth()` except the top bar's account control and `/login`
+itself. `VITE_REQUIRE_LOGIN` (below) can turn that same sign-in into a hard requirement in
+front of the whole app, without touching the sign-in mechanism itself.
 
 **This is a mock, not a real auth system.** Two accounts are hardcoded in
 [`AuthProvider.tsx`](src/features/auth/AuthProvider.tsx) — `diego@realcapital.pro` and
@@ -566,13 +575,62 @@ incorrectos"* — never indicating which field was wrong. A **"Volver a la app s
 sesión"** link is equally prominent and always present. Either path returns to whichever tab
 was active before the button was clicked.
 
-**Persistence.** None, by design — signing in is in-memory `useState`, so a reload signs back
-out. Nothing about that is hidden from the user; there's just nothing here worth persisting
-for a mock with two hardcoded accounts.
+The credential check itself lives in one place — [`LoginForm.tsx`](src/features/auth/LoginForm.tsx)
+— shared by `/login` and the access gate below, rather than two copies that could drift.
+`LoginForm` never renders the "Volver a la app" escape hatch itself; that stays specific to
+`/login`, added around it by `LoginScreen.tsx`.
+
+**Persistence.** A signed-in session is stored as `{ email }` in `sessionStorage` (not
+`localStorage`), so it survives a reload but clears the moment the tab closes — the full
+`{ name, email, avatarUrl }` shape is re-derived from that one persisted email against the
+same two demo accounts on the next mount, exactly as `login()` derives it the first time.
+Signing out clears it immediately.
 
 **Account menu.** Signed in, the top bar's sign-in button becomes an avatar (an initial-letter
 circle — there's no real photo for a mock account) and name; its dropdown shows **Nombre**,
 **Correo**, and **Cerrar sesión** — identity only, nothing else, for now.
+
+## Access gate (`VITE_REQUIRE_LOGIN`)
+
+[`AccessGate.tsx`](src/features/auth/AccessGate.tsx) wraps the whole app, above `Shell` (and
+therefore above the router), and reads one build-time flag:
+
+```ts
+const REQUIRE_LOGIN = import.meta.env.VITE_REQUIRE_LOGIN === 'true'
+```
+
+| Flag | Session | What renders |
+| --- | --- | --- |
+| `false` | any | `children` (`<Shell />`) immediately — auth stays exactly as optional as described above. |
+| `true` | none | A full-screen overlay **instead of** `children` — `Shell` never mounts, so there is no route behind the gate (not `/ahorro`, not `/ayuda`) and nothing to reach by any means. |
+| `true` | active | `children` normally, top bar and account menu intact. |
+
+Because the overlay replaces `children` rather than layering on top of it, "traps focus" and
+"nothing behind it is Tab-reachable" fall out for free — there is nothing else in the DOM to
+tab into. The overlay itself is `role="dialog"` / `aria-modal="true"`, labelled by its own
+heading and subtitle (`aria-labelledby`/`aria-describedby`) rather than by a redundant
+`aria-label` repeating the same visible text. Unlike `/login`, this overlay never renders the
+"Volver a la app" escape hatch — the whole point of a gate is that there isn't one.
+
+**Background.** A cinematic hero image ([`src/assets/access-gate-bg.jpg`](src/assets/access-gate-bg.jpg))
+sits behind a dark scrim for legibility, with a light [three.js](https://threejs.org/) particle
+field ([`AccessGateScene.tsx`](src/features/auth/AccessGateScene.tsx)) drifting over it in the
+image's own blue/gold palette — decorative only (`aria-hidden`, `pointer-events: none`), fails
+silently with no crash wherever WebGL isn't available, disposes its renderer/geometry/material
+on unmount, and freezes to a single static frame under `prefers-reduced-motion` via the
+existing `usePrefersReducedMotion` hook.
+
+**Setting the flag.** `.env` commits `VITE_REQUIRE_LOGIN=true` as the repo-wide default — the
+gate is on unless something overrides it. `.env.test` overrides it to `false` for the Vitest
+suite specifically, so the existing feature/a11y tests keep rendering `<App />` and finding
+the tab strip directly rather than every test first needing to sign in; the gate's own
+behaviour (block / reveal / sign-out / persistence) is covered separately in
+[`AccessGate.test.tsx`](src/features/auth/__tests__/AccessGate.test.tsx). In Vercel, set
+`VITE_REQUIRE_LOGIN` under **Project Settings → Environment Variables**, scoped per
+environment (e.g. `true` for Preview while the app is still being built out, `false` for
+Production once it's ready to open up) — a platform-level value there overrides `.env` at
+build time, so flipping visibility later is a redeploy with one changed setting, not a code
+change.
 
 ## Notes
 

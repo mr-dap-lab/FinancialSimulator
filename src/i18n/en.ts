@@ -750,6 +750,8 @@ export const en: Dictionary = {
     accountMenu: 'Account menu',
     loginTitle: 'Sign in',
     loginSubtitle: 'Enter your email and password. Everything else in the app works exactly the same without signing in.',
+    gateTitle: 'Restricted access',
+    gateSubtitle: 'Sign in with your email and password to continue.',
     email: 'Email address',
     password: 'Password',
     loginError: 'Incorrect email or password',

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es-CO">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+      Client-side baseline CSP. This app has no backend, so the goal is
+      narrowing what the page itself is allowed to load or run:
+
+      - script-src 'self' with no 'unsafe-inline'/'unsafe-eval': the only
+        script that can run is the bundle Vite built, loaded via <script src>;
+        an injected inline <script> or a call to eval()/new Function() is
+        blocked outright rather than relying on the app never writing one.
+      - style-src allows 'unsafe-inline' plus Google Fonts' stylesheet host.
+        The app sets dynamic values (slider fill, progress-bar width, a
+        currency symbol's padding) via React's `style` prop, which the
+        platform treats as inline CSS — the same directive that governs
+        <style> blocks. Excluding 'unsafe-inline' here would silently break
+        those, not stop an attack: CSS injection can't execute script on its
+        own, so this is a deliberate, narrower trade-off than script-src's.
+      - connect-src/img-src/font-src 'self' plus the two Google Fonts hosts
+        the stylesheet actually needs (fonts.googleapis.com for the CSS,
+        fonts.gstatic.com for the font files it points to).
+      - object-src 'none' and base-uri 'self' close off <object>/<embed>
+        plugin content and <base>-tag href hijacking, neither of which this
+        app uses.
+
+      `frame-ancestors` (stopping this page from being framed by another
+      site) is deliberately left out: browsers ignore that directive
+      entirely when it arrives via a <meta> tag — it only takes effect as a
+      real `Content-Security-Policy` HTTP response header. This is a static
+      SPA with no server of its own, so whatever host serves the built
+      `dist/` output (Netlify, Vercel, S3+CloudFront, etc.) is where that
+      header — or the older `X-Frame-Options: DENY` — needs to be configured.
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'"
+    />
+    <title>Financial Simulator</title>
+    <!--
+      Loaded here rather than via `@import url(...)` in index.css: Tailwind's
+      own `@import 'tailwindcss'` gets replaced with its generated rules
+      during the build, which pushes this import to the middle of the file —
+      invalid per spec (an `@import` must precede every rule but `@charset`
+      and `@layer`), so the browser silently drops it and Roboto never loads.
+      A real <link> in the document head has no such ordering constraint.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,5 +1,7 @@
 export { Card } from './Card'
 export { CategoryCard } from './CategoryCard'
+export { FeatureIntro } from './FeatureIntro'
+export { LegalDisclaimer } from './LegalDisclaimer'
 export { ParamField } from './ParamField'
 export { HelpPopover } from './HelpPopover'
 export { inputClass, bareInputClass } from './fieldStyles'

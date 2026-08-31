@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button } from '../../components/ui'
+import { Button, FeatureIntro, LegalDisclaimer } from '../../components/ui'
 import { ReportView } from '../../components/report/ReportView'
 import { useLocale } from '../../context/locale'
 import { useT } from '../../i18n/i18n'
@@ -8,6 +8,12 @@ import { LoanParametersPanel } from './components/LoanParametersPanel'
 import { LoanSchedule } from './components/LoanSchedule'
 import { LoanSummary } from './components/LoanSummary'
 import { useLoan } from './useLoan'
+
+const LoanIcon = () => (
+  <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
+    <path fill="currentColor" d="M12 2 2 7v2h20V7zM4 10v8H3v2h18v-2h-1v-8h-2v8h-3v-8h-2v8h-3v-8H8v8H6v-8z" />
+  </svg>
+)
 
 const CONVENTION_LABEL_KEY = {
   EA: 'conventionShortEA',
@@ -35,8 +41,14 @@ export function LoanFeature() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div className="flex justify-end">
-        <Button variant="tonal" onClick={() => setShowReport(true)}>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <FeatureIntro
+          icon={<LoanIcon />}
+          title={t.loan.introTitle}
+          description={t.loan.introDescription}
+          className="flex-1"
+        />
+        <Button variant="tonal" onClick={() => setShowReport(true)} className="shrink-0">
           {t.common.viewReport}
         </Button>
       </div>
@@ -44,6 +56,7 @@ export function LoanFeature() {
       <LoanSummary loan={loan} />
       <LoanCharts loan={loan} />
       <LoanSchedule loan={loan} />
+      <LegalDisclaimer />
 
       <ReportView
         open={showReport}

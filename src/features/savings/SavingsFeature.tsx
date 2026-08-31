@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button } from '../../components/ui'
+import { Button, FeatureIntro, LegalDisclaimer } from '../../components/ui'
 import { ReportView } from '../../components/report/ReportView'
 import { useLocale } from '../../context/locale'
 import { useT } from '../../i18n/i18n'
@@ -8,6 +8,12 @@ import { SavingsParametersPanel } from './components/SavingsParametersPanel'
 import { SavingsSchedule } from './components/SavingsSchedule'
 import { SavingsSummary } from './components/SavingsSummary'
 import { useSavings } from './useSavings'
+
+const SavingsIcon = () => (
+  <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
+    <path fill="currentColor" d="M4 20h3v-7H4zm6.5 0h3V9h-3zM17 20h3V4h-3z" />
+  </svg>
+)
 
 /**
  * Ahorro: parameters, summary, charts, detail table.
@@ -23,8 +29,14 @@ export function SavingsFeature() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div className="flex justify-end">
-        <Button variant="tonal" onClick={() => setShowReport(true)}>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <FeatureIntro
+          icon={<SavingsIcon />}
+          title={t.savings.introTitle}
+          description={t.savings.introDescription}
+          className="flex-1"
+        />
+        <Button variant="tonal" onClick={() => setShowReport(true)} className="shrink-0">
           {t.common.viewReport}
         </Button>
       </div>
@@ -32,6 +44,7 @@ export function SavingsFeature() {
       <SavingsSummary savings={savings} />
       <SavingsCharts savings={savings} />
       <SavingsSchedule savings={savings} />
+      <LegalDisclaimer />
 
       <ReportView
         open={showReport}

@@ -34,6 +34,8 @@ export const en: Dictionary = {
 
   common: {
     helpFor: (label: string) => `Help: ${label}`,
+    legalDisclaimer:
+      "This tool is for educational and personal planning purposes only. It does not constitute financial, tax, or legal advice, and Financial Simulator is not a financial advisor or financial advisory tool. Figures shown are estimates based solely on the assumptions you enter and may not reflect actual results. Consult a licensed financial professional before making decisions based on this information.",
     parameters: 'Parameters',
     liveRecalc: 'Every change recalculates the projection instantly.',
     reset: 'Reset values',
@@ -68,6 +70,8 @@ export const en: Dictionary = {
   },
 
   savings: {
+    introTitle: 'Watch a monthly contribution grow.',
+    introDescription: 'Project how a fixed monthly deposit compounds with interest, net of withholding tax.',
     monthlyContribution: 'Monthly contribution',
     monthlyContributionHint: 'Fixed amount you deposit each month.',
     monthlyContributionHelp: 'What you contribute every month, always the same unless you turn on yearly growth.',
@@ -167,6 +171,9 @@ export const en: Dictionary = {
 
 
   savingsGoal: {
+    introTitle: 'When will you hit your goal?',
+    introDescription:
+      "Find out how long it'll take to reach a target amount — or what monthly contribution gets you there on schedule.",
     goal: 'Savings goal',
     goalHint: 'How much you want saved by the end of the term.',
     goalHelp:
@@ -243,6 +250,9 @@ export const en: Dictionary = {
   },
 
   retirement: {
+    introTitle: "From today's savings to tomorrow's income.",
+    introDescription:
+      "See how today's contributions become monthly income at retirement, after taxes and inflation.",
     startingBalance: 'Starting balance',
     startingBalanceHelp: 'What you already have saved for retirement, today.',
     startingBalanceHelpLong:
@@ -334,6 +344,9 @@ export const en: Dictionary = {
   },
 
   loan: {
+    introTitle: 'Understand what a loan really costs.',
+    introDescription:
+      'Model the full amortization schedule — payment, interest, and payoff timeline — across different repayment systems.',
     principal: 'Loan amount',
     principalHint: 'Principal disbursed.',
     principalHelp: 'The principal disbursed at the start of the loan.',
@@ -467,6 +480,9 @@ export const en: Dictionary = {
   },
 
   debtConsolidation: {
+    introTitle: 'Is consolidating worth it?',
+    introDescription:
+      "Compare what you're paying today across several debts against one consolidated loan — monthly payment and payoff time, side by side.",
     cardsTitle: 'Credit cards',
     addCard: 'Add card',
     cardLimitReached: (max: number) => `Maximum ${max} cards.`,
@@ -574,6 +590,9 @@ export const en: Dictionary = {
   },
 
   card: {
+    introTitle: 'What a credit card really costs.',
+    introDescription:
+      'Simulate purchases, installments, and revolving balance — and see what happens if you only ever pay the minimum.',
     cardsTitle: 'Your cards',
     addCard: 'Add card',
     cardLimitReached: (max: number) => `Maximum ${max} cards.`,
@@ -761,6 +780,9 @@ export const en: Dictionary = {
   },
 
   budget: {
+    introTitle: 'Where does your income actually go?',
+    introDescription:
+      "Track household income and expenses month by month, and see what's genuinely left over to save.",
     primaryIncomeTitle: 'Your monthly net income',
     spouseIncomeTitle: "Spouse's net income",
     mortgageDebtTitle: 'Mortgage and debt',

@@ -509,6 +509,28 @@ kind of collision that's easy to miss in review (the anchor *looks* like an ordi
 same-page fragment link) and was only caught by actually tabbing to the link and activating it
 in a real browser, not by the unit/a11y test suite.
 
+## Feature intro banner & legal disclaimer
+
+Two small shared pieces, both reusing the i18n dictionary system rather than introducing any
+new copy mechanism.
+
+[`FeatureIntro`](src/components/ui/FeatureIntro.tsx) fills the space every tab used to leave
+empty between the tab strip and the parameters card, next to "Ver reporte" — a soft-accent card
+(the same `bg-primary-container` filled-card language `SummaryCard`'s `accent` tone already
+uses) with a small decorative icon, a bold one-line hook (`title`), and one or two explanatory
+sentences (`description`). Each feature supplies its own icon (a small file-local `<svg>`, the
+same convention as `App.tsx`'s theme icons) and its own `introTitle`/`introDescription`
+dictionary pair; the component itself knows nothing feature-specific. The row it sits in
+(`flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between`) stacks the banner above
+the button on narrow screens and sits them side by side from `sm:` up, with the banner taking
+the remaining width (`flex-1`) rather than a fixed size.
+
+[`LegalDisclaimer`](src/components/ui/LegalDisclaimer.tsx) renders the one disclaimer sentence
+at the bottom of all seven feature tabs, below the detail table — small, muted
+(`text-xs text-on-surface-variant`) and top-bordered rather than styled as an alert, so it
+reads as boilerplate, not a warning. One component, rendered identically seven times, rather
+than the same paragraph copy-pasted into each feature file.
+
 ## Structure
 
 ```
@@ -539,6 +561,7 @@ src/
     CollapsibleYearTable.tsx  ExportCsvButton.tsx  ChartTooltip.tsx  CategoryCard.tsx
     HelpPopover.tsx        # the one real @material/web usage — see below
     ChartFrame.tsx  VisuallyHiddenTable.tsx  # chart accessibility fallback
+    FeatureIntro.tsx  LegalDisclaimer.tsx  # per-tab intro banner + shared disclaimer
   components/report/       # shared "Ver reporte" infrastructure, all 7 features
     ReportView.tsx  ReportTable.tsx
   context/                # global currency setting (locale for formatting comes from language — see above)

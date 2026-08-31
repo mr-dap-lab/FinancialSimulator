@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button } from '../../components/ui'
+import { Button, FeatureIntro, LegalDisclaimer } from '../../components/ui'
 import { ReportView } from '../../components/report/ReportView'
 import { useLocale } from '../../context/locale'
 import { useT } from '../../i18n/i18n'
@@ -8,6 +8,18 @@ import { RetirementParametersPanel } from './components/RetirementParametersPane
 import { RetirementSchedule } from './components/RetirementSchedule'
 import { RetirementSummary } from './components/RetirementSummary'
 import { useRetirement } from './useRetirement'
+
+const RetirementIcon = () => (
+  <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
+    <path
+      fill="currentColor"
+      d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0-5v2m0 18v2M4.2 4.2l1.4 1.4m12.8 12.8 1.4 1.4M2 12h2m18 0h-2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+    />
+  </svg>
+)
 
 /**
  * Retiro: projects an accumulation phase (working years, annual
@@ -23,8 +35,14 @@ export function RetirementFeature() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div className="flex justify-end">
-        <Button variant="tonal" onClick={() => setShowReport(true)}>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <FeatureIntro
+          icon={<RetirementIcon />}
+          title={t.retirement.introTitle}
+          description={t.retirement.introDescription}
+          className="flex-1"
+        />
+        <Button variant="tonal" onClick={() => setShowReport(true)} className="shrink-0">
           {t.common.viewReport}
         </Button>
       </div>
@@ -32,6 +50,7 @@ export function RetirementFeature() {
       <RetirementSummary retirement={retirement} />
       <RetirementCharts retirement={retirement} />
       <RetirementSchedule retirement={retirement} />
+      <LegalDisclaimer />
 
       <ReportView
         open={showReport}

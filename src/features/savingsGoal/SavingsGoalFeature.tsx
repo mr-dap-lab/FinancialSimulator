@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button } from '../../components/ui'
+import { Button, FeatureIntro, LegalDisclaimer } from '../../components/ui'
 import { ReportView } from '../../components/report/ReportView'
 import { useLocale } from '../../context/locale'
 import { useT } from '../../i18n/i18n'
@@ -8,6 +8,12 @@ import { SavingsGoalParametersPanel } from './components/SavingsGoalParametersPa
 import { SavingsGoalSchedule } from './components/SavingsGoalSchedule'
 import { SavingsGoalSummary } from './components/SavingsGoalSummary'
 import { useSavingsGoal } from './useSavingsGoal'
+
+const SavingsGoalIcon = () => (
+  <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
+    <path fill="currentColor" d="M6 21V3h1v2h11l-2.5 4L18 13H7v8z" />
+  </svg>
+)
 
 /**
  * Meta de ahorro: parameters, summary, chart, detail table.
@@ -25,8 +31,14 @@ export function SavingsGoalFeature() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div className="flex justify-end">
-        <Button variant="tonal" onClick={() => setShowReport(true)}>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <FeatureIntro
+          icon={<SavingsGoalIcon />}
+          title={t.savingsGoal.introTitle}
+          description={t.savingsGoal.introDescription}
+          className="flex-1"
+        />
+        <Button variant="tonal" onClick={() => setShowReport(true)} className="shrink-0">
           {t.common.viewReport}
         </Button>
       </div>
@@ -34,6 +46,7 @@ export function SavingsGoalFeature() {
       <SavingsGoalSummary goal={goal} />
       <SavingsGoalChart goal={goal} />
       <SavingsGoalSchedule goal={goal} />
+      <LegalDisclaimer />
 
       <ReportView
         open={showReport}

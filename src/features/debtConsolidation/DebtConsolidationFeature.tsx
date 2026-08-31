@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button } from '../../components/ui'
+import { Button, FeatureIntro, LegalDisclaimer } from '../../components/ui'
 import { ReportView } from '../../components/report/ReportView'
 import { useLocale } from '../../context/locale'
 import { useT } from '../../i18n/i18n'
@@ -9,6 +9,12 @@ import { DebtConsolidationParametersPanel } from './components/DebtConsolidation
 import { DebtConsolidationSchedule } from './components/DebtConsolidationSchedule'
 import { DebtConsolidationSummary } from './components/DebtConsolidationSummary'
 import { useDebtConsolidation } from './useDebtConsolidation'
+
+const DebtConsolidationIcon = () => (
+  <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
+    <path fill="currentColor" d="M3 5h7l2 3h9v2H11l-2-3H3zm0 6h4l2 3h12v2H8l-2-3H3zm14 4 4 3-4 3v-2H9v-2h8z" />
+  </svg>
+)
 
 /**
  * Consolidación de deudas: compares what you're currently paying across
@@ -28,8 +34,14 @@ export function DebtConsolidationFeature() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div className="flex justify-end">
-        <Button variant="tonal" onClick={() => setShowReport(true)}>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <FeatureIntro
+          icon={<DebtConsolidationIcon />}
+          title={t.debtConsolidation.introTitle}
+          description={t.debtConsolidation.introDescription}
+          className="flex-1"
+        />
+        <Button variant="tonal" onClick={() => setShowReport(true)} className="shrink-0">
           {t.common.viewReport}
         </Button>
       </div>
@@ -37,6 +49,7 @@ export function DebtConsolidationFeature() {
       <DebtConsolidationSummary debt={debt} />
       <DebtConsolidationCharts debt={debt} />
       <DebtConsolidationSchedule debt={debt} />
+      <LegalDisclaimer />
 
       <ReportView
         open={showReport}

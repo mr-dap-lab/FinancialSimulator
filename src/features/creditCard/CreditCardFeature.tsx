@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button } from '../../components/ui'
+import { Button, FeatureIntro, LegalDisclaimer } from '../../components/ui'
 import { ReportView } from '../../components/report/ReportView'
 import { useLocale } from '../../context/locale'
 import { useT } from '../../i18n/i18n'
@@ -10,6 +10,12 @@ import { CardSummary } from './components/CardSummary'
 import { CardSwitcher } from './components/CardSwitcher'
 import { PurchasesPanel } from './components/PurchasesPanel'
 import { useCreditCard } from './useCreditCard'
+
+const CreditCardIcon = () => (
+  <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
+    <path fill="currentColor" d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4v-6h16zm0-10H4V6h16z" />
+  </svg>
+)
 
 const STRATEGY_LABEL_KEY = {
   full: 'strategyFull',
@@ -42,8 +48,14 @@ export function CreditCardFeature() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div className="flex justify-end">
-        <Button variant="tonal" onClick={() => setShowReport(true)}>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <FeatureIntro
+          icon={<CreditCardIcon />}
+          title={t.card.introTitle}
+          description={t.card.introDescription}
+          className="flex-1"
+        />
+        <Button variant="tonal" onClick={() => setShowReport(true)} className="shrink-0">
           {t.common.viewReport}
         </Button>
       </div>
@@ -61,6 +73,7 @@ export function CreditCardFeature() {
       <CardSummary card={card} />
       <CardCharts card={card} />
       <CardSchedule card={card} />
+      <LegalDisclaimer />
 
       <ReportView
         open={showReport}

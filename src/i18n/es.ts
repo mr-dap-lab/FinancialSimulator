@@ -36,6 +36,8 @@ export const es = {
 
   common: {
     helpFor: (label: string) => `Ayuda: ${label}`,
+    legalDisclaimer:
+      'Esta herramienta es solo para fines educativos y de planeación personal. No constituye asesoría financiera, tributaria ni legal, y Simulador Financiero no es un asesor financiero ni una herramienta de asesoría financiera. Las cifras mostradas son estimaciones basadas únicamente en los supuestos que usted ingresa y pueden no reflejar resultados reales. Consulte a un profesional financiero certificado antes de tomar decisiones basadas en esta información.',
     parameters: 'Parámetros',
     liveRecalc: 'Cada cambio recalcula la proyección al instante.',
     reset: 'Restablecer valores',
@@ -70,6 +72,9 @@ export const es = {
   },
 
   savings: {
+    introTitle: 'Haz crecer un ahorro mes a mes.',
+    introDescription:
+      'Proyecta cómo un aporte mensual fijo crece con interés, después de la retención tributaria.',
     monthlyContribution: 'Aporte mensual',
     monthlyContributionHint: 'Monto fijo que depositas cada mes.',
     monthlyContributionHelp: 'El monto que aportas cada mes, siempre el mismo salvo que actives el crecimiento anual.',
@@ -178,6 +183,9 @@ export const es = {
 
 
   savingsGoal: {
+    introTitle: '¿Cuándo alcanzas tu meta?',
+    introDescription:
+      'Calcula cuánto tiempo tomará llegar a un monto objetivo — o cuánto deberías aportar cada mes para lograrlo a tiempo.',
     goal: 'Meta de ahorro',
     goalHint: 'Cuánto quieres tener ahorrado al final del plazo.',
     goalHelp:
@@ -254,6 +262,9 @@ export const es = {
   },
 
   retirement: {
+    introTitle: 'De tus ahorros a tu ingreso mensual.',
+    introDescription:
+      'Proyecta cómo los aportes de hoy se convierten en ingreso mensual al retirarte, después de impuestos e inflación.',
     startingBalance: 'Saldo inicial',
     startingBalanceHelp: 'El saldo que ya tienes ahorrado para el retiro, hoy.',
     startingBalanceHelpLong:
@@ -345,6 +356,9 @@ export const es = {
   },
 
   loan: {
+    introTitle: 'Entiende el costo real de un préstamo.',
+    introDescription:
+      'Modela el cronograma completo de amortización — cuota, interés y plazo — bajo distintos sistemas de pago.',
     principal: 'Monto del préstamo',
     principalHint: 'Capital desembolsado.',
     principalHelp: 'El capital que te desembolsan al inicio del crédito.',
@@ -484,6 +498,9 @@ export const es = {
   },
 
   debtConsolidation: {
+    introTitle: '¿Consolidar tus deudas conviene?',
+    introDescription:
+      'Compara lo que pagas hoy en varias deudas contra un solo préstamo consolidado, en pago mensual y tiempo para pagar.',
     cardsTitle: 'Tarjetas de crédito',
     addCard: 'Agregar tarjeta',
     cardLimitReached: (max: number) => `Máximo ${max} tarjetas.`,
@@ -590,6 +607,9 @@ export const es = {
   },
 
   card: {
+    introTitle: 'Lo que una tarjeta cuesta de verdad.',
+    introDescription:
+      'Simula compras, cuotas diferidas y saldo rotativo — y muestra qué pasa si solo pagas el mínimo.',
     cardsTitle: 'Tus tarjetas',
     addCard: 'Agregar tarjeta',
     cardLimitReached: (max: number) => `Máximo ${max} tarjetas.`,
@@ -785,6 +805,9 @@ export const es = {
   },
 
   budget: {
+    introTitle: '¿A dónde se va tu ingreso?',
+    introDescription:
+      'Registra el ingreso y los gastos del hogar mes a mes, y descubre cuánto queda realmente disponible para ahorrar.',
     primaryIncomeTitle: 'Tu ingreso mensual neto',
     spouseIncomeTitle: 'Ingreso neto del cónyuge',
     mortgageDebtTitle: 'Hipoteca y deudas',

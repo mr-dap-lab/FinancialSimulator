@@ -354,9 +354,10 @@ export const en: Dictionary = {
       "It's the starting point for the whole amortization: the outstanding balance in month 1, before any instalment. It doesn't include insurance or fees — those are added separately to each instalment, but never added to the principal you're paying down.",
     rate: 'Interest rate',
     rateHint: (monthly: string) => `= ${monthly} effective monthly`,
+    rateEarHint: (ear: string) => `≈ ${ear} EAR`,
     rateHelp: 'The rate the loan charges, in whichever convention you pick (EAR, Nominal monthly, or Monthly).',
     rateHelpLong:
-      "The three conventions describe the same real rate in different ways: EAR is the effective annual rate, Nominal monthly is an annual rate divided by 12 with no compounding, and Monthly is the effective monthly rate directly. The field is always converted internally to a monthly rate before amortizing, and that equivalent monthly rate is shown right below so you can compare loans quoted in different conventions.",
+      "The three conventions describe the same real rate in different ways: EAR is the effective annual rate, Nominal monthly is an annual rate divided by 12 with no compounding, and Monthly is the effective monthly rate directly. The field is always converted internally to a monthly rate before amortizing, and that equivalent monthly rate is shown right below so you can compare loans quoted in different conventions. If you pick Nominal monthly or Monthly, the equivalent EAR is also shown below, computed by compounding that monthly rate over 12 months.",
     conventionEA: 'EAR (effective annual)',
     conventionNominal: 'Nominal annual, monthly',
     conventionMonthly: 'Effective monthly',

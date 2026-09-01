@@ -83,7 +83,11 @@ export function LoanParametersPanel({ loan }: { loan: LoanController }) {
         <ParamField
           label={t.loan.rate}
           className="sm:col-span-2"
-          helper={t.loan.rateHint(formatPercent(monthlyRate, 4))}
+          helper={
+            params.rateConvention === 'EA'
+              ? t.loan.rateHint(formatPercent(monthlyRate, 4))
+              : `${t.loan.rateHint(formatPercent(monthlyRate, 4))} · ${t.loan.rateEarHint(formatPercent(Math.pow(1 + monthlyRate, 12) - 1, 4))}`
+          }
           help={t.loan.rateHelp}
         >
           {(id) => (

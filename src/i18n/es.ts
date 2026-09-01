@@ -366,9 +366,10 @@ export const es = {
       'Es el punto de partida de toda la amortización: el saldo pendiente en el mes 1, antes de cualquier cuota. No incluye seguros ni cargos — esos se suman aparte a cada cuota, pero nunca se le suman al capital que estás pagando.',
     rate: 'Tasa de interés',
     rateHint: (monthly: string) => `= ${monthly} mensual efectiva`,
+    rateEarHint: (ear: string) => `≈ ${ear} E.A.`,
     rateHelp: 'La tasa que cobra el crédito, en la convención que elijas (E.A., Nominal M.V. o Mensual).',
     rateHelpLong:
-      'Las tres convenciones describen la misma tasa real de formas distintas: E.A. es la tasa efectiva anual, Nominal M.V. es una tasa anual que se divide entre 12 sin componer, y Mensual es la tasa mensual efectiva directamente. El campo siempre se convierte internamente a una tasa mensual antes de amortizar, y esa tasa mensual equivalente se muestra justo debajo para que puedas comparar créditos cotizados en convenciones distintas.',
+      'Las tres convenciones describen la misma tasa real de formas distintas: E.A. es la tasa efectiva anual, Nominal M.V. es una tasa anual que se divide entre 12 sin componer, y Mensual es la tasa mensual efectiva directamente. El campo siempre se convierte internamente a una tasa mensual antes de amortizar, y esa tasa mensual equivalente se muestra justo debajo para que puedas comparar créditos cotizados en convenciones distintas. Si eliges Nominal M.V. o Mensual, debajo también se muestra la E.A. equivalente, calculada componiendo esa tasa mensual durante 12 meses.',
     conventionEA: 'E.A. (efectiva anual)',
     conventionNominal: 'Nominal anual M.V.',
     conventionMonthly: 'Mensual efectiva',

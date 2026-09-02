@@ -11,6 +11,20 @@
         script that can run is the bundle Vite built, loaded via <script src>;
         an injected inline <script> or a call to eval()/new Function() is
         blocked outright rather than relying on the app never writing one.
+        The one exception is the Microsoft Clarity snippet below, allowed by
+        an exact `sha256-` hash of its content rather than a blanket
+        'unsafe-inline' — if that snippet's text ever changes (even
+        whitespace), recompute the hash from the literal bytes between its
+        <script> tags, e.g.:
+          node -e "const c=require('crypto');const s=require('fs').readFileSync('index.html','utf8');
+          const i=s.indexOf('ybryashbty');const o=s.lastIndexOf('<script type=\"text/javascript\">',i);
+          const a=s.indexOf('>',o)+1;const b=s.indexOf('</script>',i);
+          console.log('sha256-'+c.createHash('sha256').update(s.slice(a,b),'utf8').digest('base64'))"
+        `https://*.clarity.ms` is also on script-src for the tracking script
+        Clarity's snippet injects (`https://www.clarity.ms/tag/<id>`), on
+        connect-src for the telemetry beacons that injected script sends, and
+        on img-src for its no-JS/blocked-XHR fallback beacon (a 1x1 GIF at
+        `c.clarity.ms/c.gif`).
       - style-src allows 'unsafe-inline' plus Google Fonts' stylesheet host.
         The app sets dynamic values (slider fill, progress-bar width, a
         currency symbol's padding) via React's `style` prop, which the
@@ -20,7 +34,8 @@
         own, so this is a deliberate, narrower trade-off than script-src's.
       - connect-src/img-src/font-src 'self' plus the two Google Fonts hosts
         the stylesheet actually needs (fonts.googleapis.com for the CSS,
-        fonts.gstatic.com for the font files it points to).
+        fonts.gstatic.com for the font files it points to) and, per above,
+        Clarity's telemetry host on connect-src.
       - object-src 'none' and base-uri 'self' close off <object>/<embed>
         plugin content and <base>-tag href hijacking, neither of which this
         app uses.
@@ -35,7 +50,7 @@
     -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'"
+      content="default-src 'self'; script-src 'self' https://*.clarity.ms 'sha256-HvFn86mqnw6GIuQe3a38JYeEdAdt/MZRycTtCpPqC0M='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://*.clarity.ms; connect-src 'self' https://*.clarity.ms; object-src 'none'; base-uri 'self'"
     />
     <title>Financial Simulator</title>
     <!--
@@ -52,6 +67,23 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
     />
+    <!--
+      Microsoft Clarity analytics. This is the one inline script the CSP
+      above allows — via a `sha256-` source on `script-src` matched to this
+      exact snippet, not `'unsafe-inline'` — plus `https://*.clarity.ms` on
+      `script-src`/`connect-src` for the tag script it injects and the
+      telemetry beacons that script sends. Editing so much as a character
+      here changes its hash and CSP will silently block it again; regenerate
+      the hash (see the comment on the CSP meta tag above) if this ever needs
+      to change.
+    -->
+    <script type="text/javascript">
+      (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "ybryashbty");
+    </script>
   </head>
   <body>
     <div id="root"></div>

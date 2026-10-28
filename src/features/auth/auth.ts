@@ -3,13 +3,12 @@ import { createContext, useContext } from 'react'
 /**
  * The only shape of the signed-in user the rest of the app ever sees.
  *
- * This is a mock: two accounts are hardcoded in `AuthProvider`, there is no
- * backend, and nothing here is a real credential store. Kept to this exact
- * shape — `{ uid, name, email, avatarUrl } | null` plus `login`/`logout` —
- * specifically so that swapping in a real provider (Google via Firebase, or
- * anything else) later only means rewriting this file and `AuthProvider`;
- * every consumer (`AccountControl`, `LoginScreen`) only ever touches this
- * shape, never account-specific detail.
+ * Two providers fill it: `SupabaseAuthProvider` when Supabase is configured
+ * (real accounts, created in the Supabase dashboard — there is no public
+ * sign-up), and `MockAuthProvider` otherwise (two hardcoded demo accounts, for
+ * local work and the test suite). Every consumer (`AccountControl`,
+ * `LoginForm`, `AccessGate`, the bank-connection page) only ever touches this
+ * shape, never provider-specific detail.
  */
 export interface AuthUser {
   uid: string
@@ -18,20 +17,23 @@ export interface AuthUser {
   avatarUrl: string | null
 }
 
+export type AuthProviderKind = 'mock' | 'supabase'
+
 export interface AuthContextValue {
   user: AuthUser | null
-  /** `true` on a match (and the user is now signed in); `false` on no match. */
-  login: (email: string, password: string) => boolean
+  /** True until a stored session, if any, has been restored. Always false for the mock. */
+  loading: boolean
+  provider: AuthProviderKind
+  /** Resolves `true` on success (the user is now signed in), `false` on any failure. */
+  login: (email: string, password: string) => Promise<boolean>
   logout: () => void
+  /** A current access token for calling `api/*`, or `null` when signed out or on the mock. */
+  getAccessToken: () => Promise<string | null>
 }
 
 export const AuthContext = createContext<AuthContextValue | null>(null)
 
-/**
- * Reads sign-in state. Nothing in Ahorro, Crédito, or Tarjeta calls this —
- * auth is additive, never a gate — so it is only imported by the top bar's
- * account control and the `/login` screen.
- */
+/** Reads sign-in state. */
 export function useAuth(): AuthContextValue {
   const context = useContext(AuthContext)
   if (!context) throw new Error('useAuth must be used inside an AuthProvider')

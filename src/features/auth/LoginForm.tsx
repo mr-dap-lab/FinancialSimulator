@@ -10,11 +10,10 @@ interface LoginFormProps {
 }
 
 /**
- * The one implementation of the mock email/password check — shared by the
- * optional `/login` page (`LoginScreen`) and `AccessGate`'s full-screen
- * overlay, so the two surfaces can never drift into two different copies of
- * the same hardcoded-credential comparison. See `AuthProvider` for the two
- * demo accounts this checks against.
+ * The one email/password form — shared by the optional `/login` page
+ * (`LoginScreen`) and `AccessGate`'s full-screen overlay, so the two surfaces
+ * can never drift apart. What it signs in against (Supabase, or the two demo
+ * accounts in `MockAuthProvider`) is decided by `useAuth().login`, not here.
  *
  * Deliberately does not render any "continue without signing in" escape
  * hatch itself — that link is specific to the optional `/login` page and
@@ -26,6 +25,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [submitting, setSubmitting] = useState(false)
   const emailRef = useRef<HTMLInputElement>(null)
 
   // Moves focus into the form as soon as it mounts, rather than leaving it
@@ -34,9 +34,13 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
     emailRef.current?.focus()
   }, [])
 
-  const handleSubmit = (event: FormEvent) => {
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
-    if (login(email, password)) {
+    if (submitting) return
+    setSubmitting(true)
+    const ok = await login(email, password)
+    setSubmitting(false)
+    if (ok) {
       onSuccess()
       return
     }
@@ -84,7 +88,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         )}
       </ParamField>
 
-      <Button type="submit" variant="filled" className="mt-2 h-12 w-full">
+      <Button type="submit" variant="filled" className="mt-2 h-12 w-full" disabled={submitting}>
         {t.auth.signIn}
       </Button>
     </form>

@@ -594,6 +594,12 @@ global settings. Adding a simulator means a model in `src/lib/`, a folder under
 
 ## Sign in (mock)
 
+> **Supabase replaces this mock when it is configured.** With `VITE_SUPABASE_URL` and
+> `VITE_SUPABASE_ANON_KEY` set, `AuthProvider` uses `SupabaseAuthProvider` (real accounts,
+> created by an admin in the Supabase dashboard — there is no sign-up) and everything below
+> about the two hardcoded accounts no longer applies. Unset, nothing changes: the mock stays
+> the default for local work and the test suite. See [Bank connection](#bank-connection-bancolombia-via-croma).
+
 Identifies who's using the app — name, email — for profile purposes only. By default it is
 **additive, never a gate**: Ahorro, Crédito, and Tarjeta work exactly the same signed in or
 out, and no feature reads `useAuth()` except the top bar's account control and `/login`
@@ -681,6 +687,75 @@ environment (e.g. `true` for Preview while the app is still being built out, `fa
 Production once it's ready to open up) — a platform-level value there overrides `.env` at
 build time, so flipping visibility later is a redeploy with one changed setting, not a code
 change.
+
+## Bank connection (Bancolombia via Croma)
+
+Lets a signed-in user connect their own Bancolombia account (read-only) from `#/conexiones`,
+reached from the account menu. Design, threat model and open risks:
+[`docs/BANK_CONNECTION_DESIGN.md`](docs/BANK_CONNECTION_DESIGN.md). **Not ready for real users
+until counsel has reviewed the consent text and Croma has raised its 5-connection cap** —
+see the document's §6 and §8.
+
+**Architecture.** The browser talks to Supabase Auth directly (sign-in) and to this app's own
+`/api/bank/*` serverless functions (Vercel) for everything else. Those functions verify the
+Supabase token, hold the Croma key and the Supabase service-role key, and are the only things that
+write to Postgres. The browser never sees either key.
+
+| Endpoint | What it does |
+|---|---|
+| `GET /api/bank/consent?locale=` | The consent text, its version and SHA-256. Public. |
+| `GET/POST/DELETE /api/bank/connections` | List, create (with consent + credentials), delete. |
+| `GET /api/bank/accounts?connectionId=` | Accounts and balances, number masked to the last 4. |
+| `GET /api/bank/transactions?connectionId=&account=&from=&to=` | One account's movements, max 92 days, ending today or earlier. Returned to the browser once; never stored or logged. |
+| `POST /api/bank/imports` | Records in the audit trail that an import was applied to (or discarded from) the budget. |
+| `GET /api/bank/audit` | The caller's own audit trail. |
+
+**The flow** is three screens: what will happen → the user accepts four separate responsibility
+statements (text served and hashed by the server; the version and hash are written to the audit
+log) → the credentials. Credentials travel once, browser → function → Croma; they are never stored,
+logged, or echoed, the password field is cleared after every attempt, and the page is masked from
+Microsoft Clarity recordings.
+
+**Audit log** (`audit_events`, connections only for now): consent, each connection attempt and its
+outcome, status changes, deletion, and bank reads — never credentials, full account numbers or
+movement contents. Append-only (a database trigger rejects UPDATE/DELETE/TRUNCATE even for the
+service role). The write *before* credentials are sent is strict: if the trail cannot be written,
+Croma is not called.
+
+**Importing into Mi Presupuesto.** With a connected account, the Budget tab shows **Import expenses from Bancolombia**: pick an account and a 30/90-day window, review each expense with its suggested category (keyword rules in [`src/lib/bankImport.ts`](src/lib/bankImport.ts), editable per movement, or "do not import"), see the proposed monthly figure per field as *before → after*, and apply. Only money out is used; a field's proposal is its total ÷ the months the window spans. Applying is **record first, change second**: `import.applied` (with each field's before/after) must be written to the audit trail before the budget is touched, so a budget change never happens without its record. Cancelling a review records `import.discarded`. The movements are never persisted or logged; the audit trail stores only counts, the window and the field changes.
+
+**Safeguards.** A user holds at most `BANK_MAX_CONNECTIONS_PER_USER` connection(s) (default 1, since
+Croma allows 5 per organization in total); after `BANK_MAX_REJECTED_PER_HOUR` failed bank sign-ins
+further attempts are blocked, so this app can't be used to guess a password or lock someone's real
+account; Croma's own error wording is never shown to the user.
+
+### Running it locally
+
+1. Create a Supabase project. In the SQL editor run
+   [`supabase/migrations/20261028000000_bank_connections.sql`](supabase/migrations/20261028000000_bank_connections.sql).
+2. Authentication → Users → add yourself; turn **off** "Allow new users to sign up".
+3. Copy [`.env.example`](.env.example) to `.env.local` and fill it in. For a first run set
+   `CROMA_MODE=mock` instead of a real `CROMA_API_KEY` — no credits, no real bank password.
+4. `npm run dev`. `api/*` is served by a small Vite plugin ([`vite-api-dev-plugin.ts`](vite-api-dev-plugin.ts)),
+   so the Vercel CLI isn't needed. Sign in with your Supabase user → account menu → **Bank connection**.
+
+### Deploying
+
+Same variables in Vercel → Project Settings → Environment Variables. Server-only ones
+(`SUPABASE_SERVICE_ROLE_KEY`, `CROMA_API_KEY`) must **not** carry the `VITE_` prefix.
+`CROMA_MODE=mock` is refused when `VERCEL_ENV=production`. [`vercel.json`](vercel.json) lifts the
+functions' timeout to 60 s because Croma's live lookups can be slow.
+
+**Not yet verified on Vercel itself:** the functions import with explicit `.js` extensions (Node ESM
+rules) and are type-checked under `tsconfig.api.json`, but have only been exercised through the Vite
+dev plugin and unit tests, not a real deployment — check the first preview deploy.
+
+### Tests
+
+`api/_lib/__tests__` covers the handlers against in-memory fakes (consent, per-user isolation,
+rate limit, fail-closed audit, orphan cleanup, error mapping, no password in any persisted value)
+and the Croma client against a stubbed `fetch`. `src/features/bank/__tests__` covers the UI flow
+and an axe pass. Nothing in the suite touches Supabase or Croma.
 
 ## Notes
 

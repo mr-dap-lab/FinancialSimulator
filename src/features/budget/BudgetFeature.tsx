@@ -4,6 +4,7 @@ import { ReportView } from '../../components/report/ReportView'
 import { useLocale } from '../../context/locale'
 import { useT } from '../../i18n/i18n'
 import { budgetFieldLabel, budgetSectionLabel } from './budgetLabels'
+import { BankImportPanel } from './components/BankImportPanel'
 import { BudgetCharts } from './components/BudgetCharts'
 import { BudgetParametersPanel } from './components/BudgetParametersPanel'
 import { BudgetSchedule } from './components/BudgetSchedule'
@@ -44,6 +45,7 @@ export function BudgetFeature() {
           {t.common.viewReport}
         </Button>
       </div>
+      <BankImportPanel budget={budget} />
       <BudgetParametersPanel budget={budget} />
       <BudgetSummary budget={budget} />
       <BudgetCharts budget={budget} />

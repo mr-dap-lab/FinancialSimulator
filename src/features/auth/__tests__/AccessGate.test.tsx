@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render } from '@testing-library/react'
+import { cleanup, fireEvent, render, waitFor } from '@testing-library/react'
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 
 /**
@@ -52,12 +52,14 @@ afterEach(() => {
   sessionStorage.clear()
 })
 
-function signIn(container: HTMLElement) {
+/** Submits the demo account and waits for the (now async) sign-in to lift the gate. */
+async function signIn(container: HTMLElement) {
   const email = container.querySelector('input[type="email"]') as HTMLInputElement
   const password = container.querySelector('input[type="password"]') as HTMLInputElement
   fireEvent.change(email, { target: { value: 'diego@realcapital.pro' } })
   fireEvent.change(password, { target: { value: 'Password1!' } })
   fireEvent.submit(container.querySelector('form') as HTMLFormElement)
+  await waitFor(() => expect(container.querySelector('[role="dialog"]')).toBeNull())
 }
 
 describe('AccessGate — VITE_REQUIRE_LOGIN=true', () => {
@@ -72,7 +74,7 @@ describe('AccessGate — VITE_REQUIRE_LOGIN=true', () => {
     expect(dialog?.querySelectorAll('button').length).toBe(1)
   })
 
-  it('rejects an unknown email/password with one generic error and keeps the gate up', () => {
+  it('rejects an unknown email/password with one generic error and keeps the gate up', async () => {
     const { container } = render(<App />)
     const email = container.querySelector('input[type="email"]') as HTMLInputElement
     const password = container.querySelector('input[type="password"]') as HTMLInputElement
@@ -81,20 +83,20 @@ describe('AccessGate — VITE_REQUIRE_LOGIN=true', () => {
     fireEvent.submit(container.querySelector('form') as HTMLFormElement)
 
     expect(container.querySelector('[role="dialog"]')).not.toBeNull()
-    expect(container.querySelector('[role="alert"]')).not.toBeNull()
+    await waitFor(() => expect(container.querySelector('[role="alert"]')).not.toBeNull())
   })
 
-  it('reveals the app after a successful sign-in', () => {
+  it('reveals the app after a successful sign-in', async () => {
     const { container } = render(<App />)
-    signIn(container)
+    await signIn(container)
 
     expect(container.querySelector('[role="dialog"]')).toBeNull()
     expect(container.querySelector('a[href="#/ahorro"]')).not.toBeNull()
   })
 
-  it('re-shows the gate immediately after signing out', () => {
+  it('re-shows the gate immediately after signing out', async () => {
     const { container } = render(<App />)
-    signIn(container)
+    await signIn(container)
     expect(container.querySelector('[role="dialog"]')).toBeNull()
 
     // The account button's aria-label is the only one mentioning the signed-in
@@ -112,11 +114,11 @@ describe('AccessGate — VITE_REQUIRE_LOGIN=true', () => {
     expect(container.querySelector('a[href="#/ahorro"]')).toBeNull()
   })
 
-  it('restores the session across a fresh render, via sessionStorage rather than localStorage', () => {
+  it('restores the session across a fresh render, via sessionStorage rather than localStorage', async () => {
     expect(localStorage.getItem('fs.auth.session')).toBeNull()
 
     const first = render(<App />)
-    signIn(first.container)
+    await signIn(first.container)
     expect(sessionStorage.getItem('fs.auth.session')).toContain('diego@realcapital.pro')
     first.unmount()
 

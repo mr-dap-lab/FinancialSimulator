@@ -5,6 +5,7 @@ import { AccessGate } from './features/auth/AccessGate'
 import { AccountControl } from './features/auth/AccountControl'
 import { AuthProvider } from './features/auth/AuthProvider'
 import { LoginScreen } from './features/auth/LoginScreen'
+import { BankFeature } from './features/bank/BankFeature'
 import { BudgetFeature } from './features/budget/BudgetFeature'
 import { CreditCardFeature } from './features/creditCard/CreditCardFeature'
 import { DebtConsolidationFeature } from './features/debtConsolidation/DebtConsolidationFeature'
@@ -38,8 +39,11 @@ type TabId = (typeof TAB_IDS)[number]
  * recognise them as valid or its own "unknown hash" normalisation would
  * silently rewrite them back to `#/ahorro` on load, breaking a direct link.
  */
-const ROUTE_IDS = [...TAB_IDS, 'login', 'ayuda'] as const
+const ROUTE_IDS = [...TAB_IDS, 'login', 'ayuda', 'conexiones'] as const
 type RouteId = (typeof ROUTE_IDS)[number]
+
+/** `#/conexiones` (the bank connection) is likewise a screen, not a tab. */
+const isTab = (id: RouteId): id is TabId => (TAB_IDS as readonly string[]).includes(id)
 
 const LightIcon = () => (
   <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
@@ -208,12 +212,10 @@ function Shell() {
   // new value before anything paints, so there's no visible flash and no
   // second effect-timing pass.
   const [prevActive, setPrevActive] = useState(active)
-  const [lastRealTab, setLastRealTab] = useState<TabId>(
-    active === 'login' || active === 'ayuda' ? 'ahorro' : active,
-  )
+  const [lastRealTab, setLastRealTab] = useState<TabId>(isTab(active) ? active : 'ahorro')
   if (active !== prevActive) {
     setPrevActive(active)
-    if (active !== 'login' && active !== 'ayuda') setLastRealTab(active)
+    if (isTab(active)) setLastRealTab(active)
   }
 
   const tabs: { id: TabId; label: string }[] = [
@@ -262,7 +264,10 @@ function Shell() {
                   />
                 </svg>
               </button>
-              <AccountControl onRequestSignIn={() => setActive('login')} />
+              <AccountControl
+                onRequestSignIn={() => setActive('login')}
+                onOpenBankConnection={() => setActive('conexiones')}
+              />
             </div>
           </div>
 
@@ -312,6 +317,8 @@ function Shell() {
           <LoginScreen onReturn={() => setActive(lastRealTab)} />
         ) : active === 'ayuda' ? (
           <HelpFeature onReturn={() => setActive(lastRealTab)} />
+        ) : active === 'conexiones' ? (
+          <BankFeature onRequestSignIn={() => setActive('login')} />
         ) : (
           <>
             {active === 'ahorro' && <SavingsFeature />}

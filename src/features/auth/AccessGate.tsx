@@ -32,10 +32,24 @@ const REQUIRE_LOGIN = import.meta.env.VITE_REQUIRE_LOGIN === 'true'
  *   existing account menu and sign-out are untouched.
  */
 export function AccessGate({ children }: { children: ReactNode }) {
-  const { user } = useAuth()
+  const { user, loading } = useAuth()
   const t = useT()
 
-  if (!REQUIRE_LOGIN || user) {
+  if (!REQUIRE_LOGIN) {
+    return <>{children}</>
+  }
+
+  // A stored session is still being restored: showing the login wall now would
+  // flash it at someone who is in fact signed in.
+  if (loading) {
+    return (
+      <div role="status" className="min-h-screen bg-surface p-8 text-sm text-on-surface-variant">
+        {t.auth.loading}
+      </div>
+    )
+  }
+
+  if (user) {
     return <>{children}</>
   }
 

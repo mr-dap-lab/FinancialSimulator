@@ -15,8 +15,14 @@ function initialsOf(name: string): string {
  * avatar and name, opening a menu with the one action that matters here:
  * signing out.
  */
-export function AccountControl({ onRequestSignIn }: { onRequestSignIn: () => void }) {
-  const { user, logout } = useAuth()
+export function AccountControl({
+  onRequestSignIn,
+  onOpenBankConnection,
+}: {
+  onRequestSignIn: () => void
+  onOpenBankConnection: () => void
+}) {
+  const { user, logout, provider } = useAuth()
   const t = useT()
   const [open, setOpen] = useState(false)
   const menuId = useId()
@@ -115,6 +121,20 @@ export function AccountControl({ onRequestSignIn }: { onRequestSignIn: () => voi
             <p className="truncate text-sm text-on-surface">{user.email}</p>
           </div>
           <div className="border-t border-outline-variant" role="none" />
+          {/* Only offered with real accounts: the mock has no backend to connect through. */}
+          {provider === 'supabase' && (
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setOpen(false)
+                onOpenBankConnection()
+              }}
+              className="block w-full px-4 py-2.5 text-left text-sm text-on-surface transition-colors hover:bg-on-surface/8 focus-visible:bg-on-surface/8 focus-visible:outline-none"
+            >
+              {t.bank.menuLabel}
+            </button>
+          )}
           <button
             type="button"
             role="menuitem"

@@ -778,6 +778,178 @@ export const en: Dictionary = {
     backToApp: 'Back to the app without signing in',
     name: 'Name',
     emailLabel: 'Email',
+    loading: 'Loading…',
+  },
+
+  bank: {
+    menuLabel: 'Bank connection',
+    introTitle: 'Bring your real accounts into the simulator.',
+    introDescription:
+      'Connect your Bancolombia account in read-only mode. You decide when to connect and when to disconnect.',
+    unavailable:
+      'Bank connections need a real account and a configured server; they are not available in this environment.',
+    signInRequired: 'Sign in to manage your bank connection.',
+    loading: 'Loading…',
+    loadError: "We couldn't load your connections.",
+    retry: 'Retry',
+    back: 'Back',
+    continue: 'Continue',
+
+    stepsLabel: 'Steps to connect your account',
+    stepIntro: 'What you will do',
+    stepConsent: 'Your responsibility',
+    stepCredentials: 'Your credentials',
+    stepOf: (current: number, total: number) => `Step ${current} of ${total}`,
+
+    introHeading: 'Before you start',
+    introDoTitle: 'What we do',
+    introDo:
+      'We read your accounts and balances from Bancolombia’s Sucursal Virtual Personas, in read-only mode.',
+    introDontTitle: 'What we don’t do',
+    introDont:
+      'We cannot move money, make payments or change anything in your account. We do not store your password.',
+    introWhoTitle: 'Who is involved',
+    introWho:
+      'To query the bank we use Croma, a third-party provider that keeps your credentials encrypted.',
+    introControlTitle: 'You are in control',
+    introControl:
+      'You can disconnect whenever you like; doing so deletes your credentials from the provider. Every query signs in to your bank, so we only read when you ask us to.',
+    start: 'Get started',
+
+    consentHeading: 'This connection is your decision',
+    consentIntro: 'Read and accept every point to continue.',
+    consentVersion: (version: string) => `Text version: ${version}`,
+    consentLoadError: "We couldn't load the consent text, so you can't continue.",
+
+    credentialsHeading: 'Sucursal Virtual credentials',
+    credentialsIntro:
+      'Use the same username and password you use to sign in to Bancolombia’s Sucursal Virtual Personas. If you don’t remember your password, recover it directly on the bank’s website.',
+    username: 'Username',
+    bankPassword: 'Password',
+    showPassword: 'Show password',
+    hidePassword: 'Hide password',
+    securityNote:
+      'We do not store your password: it travels once, encrypted, to the provider. We will never ask for a dynamic key or your card details.',
+    connect: 'Connect account',
+    verifying: 'Verifying with the bank… this can take a few seconds.',
+    connected: 'Account connected.',
+
+    errors: {
+      connection_rejected:
+        'The bank did not accept these details. Check your username and password and try again.',
+      connection_exists: 'This account is already connected.',
+      connection_limit_user: 'You already have a connected account.',
+      capacity_reached: 'There are no connection slots available right now. Try again later.',
+      service_busy: (minutes: number | null) =>
+        `The service is busy. Try again ${minutes ? `in ${minutes} min` : 'later'}.`,
+      too_many_attempts:
+        'Too many failed attempts. For your security, wait an hour before trying again; pressing on could also lock your password at the bank.',
+      consent_outdated:
+        'The consent text changed. Go back to the previous step to read and accept it again.',
+      consent_required: 'You must accept every consent point.',
+      audit_unavailable:
+        "We couldn't record the operation in the history, so it was not carried out. Try again.",
+      unauthorized: 'Your session expired. Sign in again.',
+      not_configured: 'Bank connections are not configured on this server.',
+      provider_unavailable: 'The provider did not respond. Try again in a few minutes.',
+      generic: 'Something went wrong. Try again.',
+    },
+
+    cardTitle: 'Bancolombia',
+    connectedOn: (date: string) => `Connected on ${date}`,
+    lastUsed: (date: string) => `Last used: ${date}`,
+    signInsToday: (count: number) => `Sign-ins today: ${count}`,
+    statusActive: 'Active',
+    statusExhausted: 'Daily allowance used',
+    statusInvalid: 'Needs reconnecting',
+    exhaustedUntil: (date: string) => `Available again ${date}.`,
+    invalidHelp:
+      'The bank no longer accepts the saved credentials. Disconnect the account and connect it again.',
+    stale: "We couldn't verify the status with the provider; showing the last known one.",
+    showAccounts: 'View accounts',
+    hideAccounts: 'Hide accounts',
+    accountsTitle: 'Your accounts',
+    accountsNote: 'Every query signs in to your bank; only run it when you need it.',
+    accountsLoading: 'Asking the bank…',
+    accountsEmpty: 'No accounts were found.',
+    accountAvailable: 'Available',
+    accountTypes: {
+      savings: 'Savings',
+      checking: 'Checking',
+      credit_card: 'Credit card',
+      other: 'Other',
+    },
+    disconnect: 'Disconnect',
+    disconnectConfirm: 'Your credentials will be deleted from the provider. Disconnect this account?',
+    disconnectYes: 'Yes, disconnect',
+    cancel: 'Cancel',
+    disconnecting: 'Disconnecting…',
+
+    auditTitle: 'Your connection activity',
+    auditDescription:
+      'A record of what has happened with your connection. It never includes passwords or full account numbers.',
+    auditEmpty: 'No activity yet.',
+    auditWhen: 'Date',
+    auditEvent: 'Event',
+    auditResult: 'Result',
+    auditDetail: 'Detail',
+    auditSuccess: 'Success',
+    auditFailure: 'Failed',
+    auditAutomatic: 'Automatic',
+    auditAccountsCount: (count: number) => (count === 1 ? '1 account' : `${count} accounts`),
+    auditEvents: {
+      'consent.accepted': 'You accepted the consent',
+      'connection.attempted': 'Connection attempt',
+      'connection.created': 'Account connected',
+      'connection.rejected': 'The bank rejected the credentials',
+      'connection.duplicate': 'Account was already connected',
+      'connection.limit_reached': 'No slots available',
+      'connection.blocked': 'Attempts blocked for security',
+      'connection.failed': 'Connection failed',
+      'connection.status_changed': 'Connection status changed',
+      'connection.deleted': 'Account disconnected',
+      'accounts.read': 'Accounts queried',
+      'transactions.read': 'Movements queried',
+      'import.applied': 'Import applied to the budget',
+      'import.discarded': 'Import discarded',
+    },
+    auditMovementsCount: (count: number) => (count === 1 ? '1 movement' : `${count} movements`),
+    auditChangesCount: (count: number) => (count === 1 ? '1 field' : `${count} fields`),
+  },
+
+  bankImport: {
+    title: 'Import expenses from Bancolombia',
+    description:
+      'Bring in your real movements, review them, and decide what is applied to your budget. Only expenses (money going out) are used.',
+    note: 'This queries your bank live: it signs in once per query.',
+    open: 'Import',
+    loading: 'Querying…',
+    noConnection: 'You have no connected account yet.',
+    invalidConnection: 'Your connection needs to be reconnected.',
+    goToConnection: 'Go to bank connection',
+    account: 'Account',
+    period: 'Period',
+    last30: 'Last 30 days',
+    last90: 'Last 90 days',
+    fetch: 'Find movements',
+    fetching: 'Fetching movements…',
+    reviewTitle: 'Review the movements',
+    reviewHint: (months: string) =>
+      `Each expense suggests a category; change it or exclude it. The proposed monthly amount is each category's total ÷ ${months} months.`,
+    colDate: 'Date',
+    colDescription: 'Description',
+    colAmount: 'Amount',
+    colCategory: 'Category',
+    categoryOf: (description: string) => `Category of ${description}`,
+    skip: 'Do not import',
+    noExpenses: 'No expenses were found in this period.',
+    changesTitle: 'Proposed changes (monthly)',
+    noChanges: 'With these categories, no budget field changes.',
+    apply: 'Apply to budget',
+    applying: 'Applying…',
+    cancel: 'Cancel',
+    applied: (count: number) =>
+      count === 1 ? '1 budget field was updated.' : `${count} budget fields were updated.`,
   },
 
   budget: {

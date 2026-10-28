@@ -803,6 +803,180 @@ export const es = {
     backToApp: 'Volver a la app sin iniciar sesión',
     name: 'Nombre',
     emailLabel: 'Correo',
+    loading: 'Cargando…',
+  },
+
+  bank: {
+    menuLabel: 'Conexión bancaria',
+    introTitle: 'Trae tus cuentas reales al simulador.',
+    introDescription:
+      'Conecta tu cuenta de Bancolombia en modo de solo lectura. Tú decides cuándo conectar y cuándo desconectar.',
+    unavailable:
+      'Las conexiones bancarias necesitan una cuenta real y un servidor configurado; no están disponibles en este entorno.',
+    signInRequired: 'Inicia sesión para administrar tu conexión bancaria.',
+    loading: 'Cargando…',
+    loadError: 'No pudimos cargar tus conexiones.',
+    retry: 'Reintentar',
+    back: 'Atrás',
+    continue: 'Continuar',
+
+    stepsLabel: 'Pasos para conectar tu cuenta',
+    stepIntro: 'Qué vas a hacer',
+    stepConsent: 'Tu responsabilidad',
+    stepCredentials: 'Tus credenciales',
+    stepOf: (current: number, total: number) => `Paso ${current} de ${total}`,
+
+    introHeading: 'Antes de empezar',
+    introDoTitle: 'Qué hacemos',
+    introDo:
+      'Leemos tus cuentas y saldos de la Sucursal Virtual Personas de Bancolombia, en modo de solo lectura.',
+    introDontTitle: 'Qué no hacemos',
+    introDont:
+      'No podemos mover dinero, hacer pagos ni cambiar nada en tu cuenta. No guardamos tu clave.',
+    introWhoTitle: 'Quién interviene',
+    introWho:
+      'Para consultar el banco usamos a Croma, un proveedor externo que guarda tus credenciales cifradas.',
+    introControlTitle: 'Tú mandas',
+    introControl:
+      'Puedes desconectar cuando quieras; al hacerlo se eliminan tus credenciales del proveedor. Cada consulta inicia sesión en tu banco, así que solo leemos cuando tú lo pides.',
+    start: 'Empezar',
+
+    consentHeading: 'Esta conexión es decisión tuya',
+    consentIntro: 'Lee y acepta cada punto para continuar.',
+    consentVersion: (version: string) => `Versión del texto: ${version}`,
+    consentLoadError: 'No pudimos cargar el texto de consentimiento, así que no se puede continuar.',
+
+    credentialsHeading: 'Credenciales de la Sucursal Virtual',
+    credentialsIntro:
+      'Usa el mismo usuario y clave con los que entras a la Sucursal Virtual Personas de Bancolombia. Si no recuerdas tu clave, recupérala directamente en el sitio del banco.',
+    username: 'Usuario',
+    bankPassword: 'Clave',
+    showPassword: 'Mostrar clave',
+    hidePassword: 'Ocultar clave',
+    securityNote:
+      'No guardamos tu clave: viaja una sola vez, cifrada, hacia el proveedor. Nunca te pediremos clave dinámica ni datos de tu tarjeta.',
+    connect: 'Conectar cuenta',
+    verifying: 'Verificando con el banco… puede tardar unos segundos.',
+    connected: 'Cuenta conectada.',
+
+    errors: {
+      connection_rejected:
+        'El banco no aceptó estos datos. Revisa tu usuario y clave e inténtalo de nuevo.',
+      connection_exists: 'Esta cuenta ya está conectada.',
+      connection_limit_user: 'Ya tienes una cuenta conectada.',
+      capacity_reached:
+        'Por ahora no hay cupos disponibles para nuevas conexiones. Inténtalo más tarde.',
+      service_busy: (minutes: number | null) =>
+        `El servicio está ocupado. Inténtalo de nuevo ${minutes ? `en ${minutes} min` : 'más tarde'}.`,
+      too_many_attempts:
+        'Demasiados intentos fallidos. Por seguridad, espera una hora antes de intentarlo otra vez; insistir también podría bloquear tu clave en el banco.',
+      consent_outdated:
+        'El texto de consentimiento cambió. Vuelve al paso anterior para leerlo y aceptarlo de nuevo.',
+      consent_required: 'Debes aceptar todos los puntos de consentimiento.',
+      audit_unavailable:
+        'No pudimos registrar la operación en el historial, así que no se realizó. Inténtalo de nuevo.',
+      unauthorized: 'Tu sesión expiró. Inicia sesión de nuevo.',
+      not_configured: 'Las conexiones bancarias no están configuradas en este servidor.',
+      provider_unavailable: 'El proveedor no respondió. Inténtalo de nuevo en unos minutos.',
+      generic: 'Algo salió mal. Inténtalo de nuevo.',
+    },
+
+    cardTitle: 'Bancolombia',
+    connectedOn: (date: string) => `Conectada el ${date}`,
+    lastUsed: (date: string) => `Último uso: ${date}`,
+    signInsToday: (count: number) => `Inicios de sesión hoy: ${count}`,
+    statusActive: 'Activa',
+    statusExhausted: 'Cupo diario agotado',
+    statusInvalid: 'Requiere reconectar',
+    exhaustedUntil: (date: string) => `Se habilita de nuevo ${date}.`,
+    invalidHelp:
+      'El banco ya no acepta las credenciales guardadas. Desconecta la cuenta y vuelve a conectarla.',
+    stale: 'No pudimos verificar el estado con el proveedor; mostramos el último conocido.',
+    showAccounts: 'Ver cuentas',
+    hideAccounts: 'Ocultar cuentas',
+    accountsTitle: 'Tus cuentas',
+    accountsNote: 'Cada consulta inicia sesión en tu banco; hazla solo cuando la necesites.',
+    accountsLoading: 'Consultando al banco…',
+    accountsEmpty: 'No se encontraron cuentas.',
+    accountAvailable: 'Disponible',
+    accountTypes: {
+      savings: 'Ahorros',
+      checking: 'Corriente',
+      credit_card: 'Tarjeta de crédito',
+      other: 'Otra',
+    },
+    disconnect: 'Desconectar',
+    disconnectConfirm:
+      'Se eliminarán tus credenciales del proveedor. ¿Desconectar esta cuenta?',
+    disconnectYes: 'Sí, desconectar',
+    cancel: 'Cancelar',
+    disconnecting: 'Desconectando…',
+
+    auditTitle: 'Actividad de tu conexión',
+    auditDescription:
+      'Registro de lo que ha pasado con tu conexión. No incluye claves ni números completos de cuenta.',
+    auditEmpty: 'Todavía no hay actividad.',
+    auditWhen: 'Fecha',
+    auditEvent: 'Evento',
+    auditResult: 'Resultado',
+    auditDetail: 'Detalle',
+    auditSuccess: 'Correcto',
+    auditFailure: 'Fallido',
+    auditAutomatic: 'Automático',
+    auditAccountsCount: (count: number) => (count === 1 ? '1 cuenta' : `${count} cuentas`),
+    auditEvents: {
+      'consent.accepted': 'Aceptaste el consentimiento',
+      'connection.attempted': 'Intento de conexión',
+      'connection.created': 'Cuenta conectada',
+      'connection.rejected': 'El banco rechazó las credenciales',
+      'connection.duplicate': 'La cuenta ya estaba conectada',
+      'connection.limit_reached': 'Sin cupos disponibles',
+      'connection.blocked': 'Intentos bloqueados por seguridad',
+      'connection.failed': 'Falló la conexión',
+      'connection.status_changed': 'Cambió el estado de la conexión',
+      'connection.deleted': 'Cuenta desconectada',
+      'accounts.read': 'Consulta de cuentas',
+      'transactions.read': 'Consulta de movimientos',
+      'import.applied': 'Importación aplicada al presupuesto',
+      'import.discarded': 'Importación descartada',
+    },
+    auditMovementsCount: (count: number) => (count === 1 ? '1 movimiento' : `${count} movimientos`),
+    auditChangesCount: (count: number) => (count === 1 ? '1 campo' : `${count} campos`),
+  },
+
+  bankImport: {
+    title: 'Importar gastos desde Bancolombia',
+    description:
+      'Trae tus movimientos reales, revísalos y decide qué se aplica a tu presupuesto. Solo se usan los gastos (dinero que sale).',
+    note: 'Esto consulta tu banco en vivo: inicia sesión una vez por consulta.',
+    open: 'Importar',
+    loading: 'Consultando…',
+    noConnection: 'Aún no tienes una cuenta conectada.',
+    invalidConnection: 'Tu conexión necesita reconectarse.',
+    goToConnection: 'Ir a conexión bancaria',
+    account: 'Cuenta',
+    period: 'Periodo',
+    last30: 'Últimos 30 días',
+    last90: 'Últimos 90 días',
+    fetch: 'Buscar movimientos',
+    fetching: 'Consultando movimientos…',
+    reviewTitle: 'Revisa los movimientos',
+    reviewHint: (months: string) =>
+      `Cada gasto sugiere una categoría; cámbiala o exclúyelo. El monto mensual propuesto es el total de cada categoría ÷ ${months} meses.`,
+    colDate: 'Fecha',
+    colDescription: 'Descripción',
+    colAmount: 'Monto',
+    colCategory: 'Categoría',
+    categoryOf: (description: string) => `Categoría de ${description}`,
+    skip: 'No importar',
+    noExpenses: 'No se encontraron gastos en este periodo.',
+    changesTitle: 'Cambios propuestos (mensual)',
+    noChanges: 'Con estas categorías no cambia ningún campo del presupuesto.',
+    apply: 'Aplicar al presupuesto',
+    applying: 'Aplicando…',
+    cancel: 'Cancelar',
+    applied: (count: number) =>
+      count === 1 ? 'Se actualizó 1 campo del presupuesto.' : `Se actualizaron ${count} campos del presupuesto.`,
   },
 
   budget: {

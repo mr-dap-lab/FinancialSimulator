@@ -35,7 +35,10 @@
       - connect-src/img-src/font-src 'self' plus the two Google Fonts hosts
         the stylesheet actually needs (fonts.googleapis.com for the CSS,
         fonts.gstatic.com for the font files it points to) and, per above,
-        Clarity's telemetry host on connect-src.
+        Clarity's telemetry host on connect-src. connect-src also allows
+        `https://*.supabase.co`: the browser talks to Supabase Auth directly
+        to sign in. Bank-connection calls go to `/api/*` on this same origin
+        ('self'), never to Croma — the browser never sees that key.
       - object-src 'none' and base-uri 'self' close off <object>/<embed>
         plugin content and <base>-tag href hijacking, neither of which this
         app uses.
@@ -50,7 +53,7 @@
     -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' https://*.clarity.ms 'sha256-HvFn86mqnw6GIuQe3a38JYeEdAdt/MZRycTtCpPqC0M='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://*.clarity.ms; connect-src 'self' https://*.clarity.ms; object-src 'none'; base-uri 'self'"
+      content="default-src 'self'; script-src 'self' https://*.clarity.ms 'sha256-HvFn86mqnw6GIuQe3a38JYeEdAdt/MZRycTtCpPqC0M='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://*.clarity.ms; connect-src 'self' https://*.clarity.ms https://*.supabase.co; object-src 'none'; base-uri 'self'"
     />
     <title>Financial Simulator</title>
     <!--
